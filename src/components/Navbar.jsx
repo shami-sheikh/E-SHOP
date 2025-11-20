@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+
+import { BsPersonFill } from "react-icons/bs";
 import { Link, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaSearch, FaSlidersH } from 'react-icons/fa';
 import { useSelector,useDispatch } from 'react-redux';
@@ -17,9 +19,12 @@ const dispatch=useDispatch()
 const navigate=useNavigate()
 
 const handlesearch=(e)=>{
-e.preventDefault()
-dispatch(setsearchterm(search))
-navigate('/FilterData')
+  e.preventDefault()
+  dispatch(setsearchterm(search))
+  navigate('/FilterData')
+  // close mobile menu after navigation so the input click doesn't prematurely
+  // toggle/close the menu while the form is submitting
+  setActiveMenu(false)
 }
 const opensingup=()=>{
   setislogin(false)
@@ -69,7 +74,7 @@ const openlogin=()=>{
             </Link>
 
             <button className="hidden md:block text-sm font-medium" onClick={()=>setIsModalOpen(true)}>
-             <span> Login</span> || <span>Register</span>
+       <BsPersonFill className='text-2xl' />
             </button>
 
             <button onClick={()=>setIsModalOpen(true)} className="md:hidden hover:text-green-600">
@@ -105,11 +110,23 @@ const openlogin=()=>{
           activeMenu ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex flex-col items-start p-6 gap-6 font-serif font-semibold text-gray-800" onClick={() => setActiveMenu(false)}>
-          <Link to="/" >Home</Link>
-          <Link to="/Shop">Shop</Link>
-          <Link to="/Contact">Contact</Link>
-          <Link to="/About">About</Link>
+        
+        <div className="flex flex-col items-start p-6 gap-6 font-serif font-semibold text-gray-800">
+        <form onSubmit={handlesearch} className="relative flex-1 mx-6 md:hidden block">
+  <input
+    type="search"
+    onChange={(e) => setsearch(e.target.value)}
+    placeholder="Search products..."
+    className="w-full border-2 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+  />
+  <button type="submit">
+    <FaSearch className="absolute top-3 right-3 text-gray-500 text-xl cursor-pointer" />
+  </button>
+</form>
+          <Link to="/" onClick={() => setActiveMenu(false)}>Home</Link>
+          <Link to="/Shop" onClick={() => setActiveMenu(false)}>Shop</Link>
+          <Link to="/Contact" onClick={() => setActiveMenu(false)}>Contact</Link>
+          <Link to="/About" onClick={() => setActiveMenu(false)}>About</Link>
         </div>
       </div>
     </>

@@ -78,7 +78,7 @@ const navigate=useNavigate()
                     onClick={() => dispatch(removeItems(item.id))}
                     className="text-red-500 hover:text-red-600"
                   >
-                    <FaTrash />
+                    <FaTrash className="flex items-center text-center justify-center lg:w-full" />
                   </button>
                 </div>
               ))}

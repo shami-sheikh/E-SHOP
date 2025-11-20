@@ -7,7 +7,9 @@ import {useSelector,useDispatch} from 'react-redux'
 import { setProducts } from "../redux/Productslice.jsx";
 import Productcart from "./Productcart.jsx";
 import Shop from "../pages/Shop.jsx";
+import { useNavigate } from "react-router-dom";
 function Home() {
+  const navigate= useNavigate()
   const dispatch=useDispatch()
   const product=useSelector(stae=>stae.product)
   useEffect(() => {
@@ -49,7 +51,7 @@ function Home() {
             <p className="mt-2 text-sm md:text-base">
               Millions+ Products, Just for You
             </p>
-            <button className="mt-4 bg-green-500 hover:bg-green-600 transition px-4 py-2 rounded-lg font-semibold">
+            <button onClick={()=>navigate('/shop')} className="mt-4 bg-green-500 hover:bg-green-600 transition px-4 py-2 rounded-lg font-semibold">
               Shop Now
             </button>
           </div>

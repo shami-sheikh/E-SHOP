@@ -9,6 +9,8 @@ import Checkout from './pages/Checkout'
 import Orders from './pages/Orders'
 import FilterData from './pages/FilterData'
 import Productdetail from './components/Productdetail'
+import Contact from './pages/Contact'
+import About from './pages/About'
 function App() {
   const [order,setorder]=useState(null)
   return (
@@ -23,6 +25,8 @@ function App() {
   <Route path='/ordertracker' element={<Orders order={order} />} />
   <Route path='/FilterData' element={<FilterData />} />
   <Route path='/product/:id' element={<Productdetail />} />
+  <Route path='/contact' element={<Contact />} />
+  <Route path='/About' element={<About />} />
 </Routes>
   <Footer/>
   </BrowserRouter>

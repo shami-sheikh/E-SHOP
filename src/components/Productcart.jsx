@@ -28,11 +28,11 @@ function Productcart({ product }) {
       </div>
 
       <div
-        className='absolute bottom-4 right-2 flex items-center justify-center text-center w-8 h-8 bg-red-500 group text-white rounded-full hover:w-32 hover:bg-red-600 transition-all duration-500'
+        className='absolute bottom-4 right-2 flex items-center justify-center text-center p-2 hover:scale-105 lg:w-8 lg:h-8 bg-red-500 group text-white rounded-full hover:w-32 hover:bg-red-600 transition-all duration-500'
         onClick={(e) => handleclick(e, product)}
       >
-        <span className='group-hover:hidden'>+</span>
-        <button className='hidden group-hover:block cursor-pointer'>Add to cart</button>
+        <span className=' hidden lg:block group-hover:hidden'>+</span>
+        <button className='lg:hidden group-hover:block cursor-pointer'>Add to cart</button>
         
       </div>
     </div>
