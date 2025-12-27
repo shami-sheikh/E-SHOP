@@ -11,6 +11,8 @@ import FilterData from './pages/FilterData'
 import Productdetail from './components/Productdetail'
 import Contact from './pages/Contact'
 import About from './pages/About'
+import Login from './components/Login'
+import Register from './components/Register'
 function App() {
   const [order,setorder]=useState(null)
   return (
@@ -19,6 +21,8 @@ function App() {
   <Navbar/>
 <Routes>
   <Route path='/' element={<Home />} />
+  <Route path='/login' element={<Login />} />
+  <Route path='/register' element={<Register />} />
   <Route path='/Shop' element={<Shop />} />
   <Route path='/Cart' element={<Cart />} />
   <Route path='/Checkout' element={<Checkout setorder={setorder} />} />

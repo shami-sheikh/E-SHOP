@@ -1,16 +1,29 @@
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import {db} from "./firebase"
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore'
+import { auth } from "./firebase"
+
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 function Login({opensingup}) {
   const navigate=useNavigate()
-  const handleForgot = () => {
-    toast('Password reset link sent to your email', {
-      icon: '📧',
-      duration: 3000,
-    })
-  }
+  const handleForgot = async () => {
+      const email = inputfield.email
+      if (!email) { toast.error('Enter your email first'); return }
+      try {
+        await sendPasswordResetEmail(auth, email)
+        toast('Password reset link sent to your email', { icon: '📧', duration: 3000 })
+      } catch (err) {
+        console.error(err)
+        // Fallback: if Firebase email reset not available, check local users
+        const localUsers = JSON.parse(localStorage.getItem('localUsers') || '[]')
+        const found = localUsers.find((u) => u.email === email)
+        if (found) {
+          toast('Local account found. Password reset via email is not available in fallback.', { icon: 'ℹ️' })
+        } else {
+          toast.error('Failed to send reset email')
+        }
+      }
+    }
   const [loading,setLoading]=useState(false)
   const [inputfield,setinputfield]=useState({
     email:'',
@@ -24,36 +37,40 @@ setinputfield({
 [index]:e.target.value
 });
   };
-const handleloginsubmit = async (e) => {
-  e.preventDefault()
-  const { email, password } = inputfield
-  if (!email?.trim() || !password) {
-    toast.error("All fields are required")
-    return
-  }
-  setLoading(true)
-  try {
-    const userCollection = collection(db, 'user')
-    const q = query(
-      userCollection,
-      where('email', '==', email.trim()),
-      where('password', '==', password)  // plain password check (unsafe)
-    )
-    const querySnap = await getDocs(q)
-
-    if (querySnap.empty) {
-      toast.error("Invalid email or password")
-    } else {
-      toast.success("Login successful")
-      navigate('/')  // only navigate if credentials are correct
+  const handleloginsubmit = async (e) => {
+    e.preventDefault()
+    const { email, password } = inputfield
+    if (!email?.trim() || !password) {
+      toast.error('All fields are required')
+      return
     }
-  } catch (error) {
-    console.error('Firebase error:', error)
-    toast.error("Something went wrong")
-  } finally {
-    setLoading(false)
+    setLoading(true)
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, email.trim(), password)
+      toast.success('Login successful')
+      // Optionally navigate or load profile
+      navigate('/')
+    } catch (err) {
+      console.error('Auth error', err)
+      const code = err?.code || 'auth/error'
+      const msg = err?.message || 'Invalid email or password'
+      // Try localStorage fallback when auth is not configured or network failed
+      if (code === 'auth/configuration-not-found' || code === 'auth/network-request-failed') {
+        const localUsers = JSON.parse(localStorage.getItem('localUsers') || '[]')
+        const found = localUsers.find((u) => u.email === email.trim() && u.password === password)
+        if (found) {
+          toast.success('Login successful (local)')
+          navigate('/')
+        } else {
+          toast.error('Local auth failed: check email/password or register')
+        }
+      } else {
+        toast.error(`${code}: ${msg}`)
+      }
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   return (
     <div className="p-4 bg ">
@@ -86,7 +103,7 @@ const handleloginsubmit = async (e) => {
    
          <button  onClick={handleloginsubmit}
         
-        className= {`w-full p-2  px-4 rounded-lg bg-green-500 mt-2 text-white ${
+        className= {`w-full p-2  px-4 rounded-lg  mt-2 text-white ${
           loading ? "bg-gray-500" : "bg-green-500  hover:bg-green-600"
         }`}
         
